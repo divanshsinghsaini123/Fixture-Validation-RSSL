@@ -6,6 +6,7 @@ class Assignment(BaseModel):
     engineerId: str
     engineerName: str
     inspectionDate: date
+    status: str = "pending" # states: pending, completed, missed
 
 class Shed2MachineRegistration(BaseModel):
     hollowShaftLine: str

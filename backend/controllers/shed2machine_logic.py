@@ -22,6 +22,8 @@ def create_machine(machine: Shed2MachineRegistration):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to save machine data: {str(e)}")
 
+from datetime import date, datetime
+
 def fetch_all_machines():
     """Business logic to retrieve all machines"""
     db = get_db()
@@ -30,8 +32,22 @@ def fetch_all_machines():
         
     collection = db["Shed2machines"]
     machines = list(collection.find())
+    today = date.today()
+    
     for mach in machines:
         mach["_id"] = str(mach["_id"])
+        if "scheduledTo" in mach:
+            for assignment in mach["scheduledTo"]:
+                # Dynamically determine if inspection is missed
+                if assignment.get("status", "pending") == "pending":
+                    try:
+                        ins_date_str = assignment.get("inspectionDate")
+                        if ins_date_str:
+                            ins_date = datetime.strptime(ins_date_str.split("T")[0], "%Y-%m-%d").date()
+                            if ins_date < today:
+                                assignment["status"] = "missed"
+                    except:
+                        pass
     return machines
 
 def assign_engineer_to_machine(machine_id: str, assignment_data):

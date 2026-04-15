@@ -19,13 +19,20 @@ const Shed2MachineForm: React.FC = () => {
       const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
       const token = localStorage.getItem('access_token');
 
+      const sanitizedData = {
+        hollowShaftLine: formData.hollowShaftLine.trim().toLowerCase(),
+        machineNumber: formData.machineNumber.trim(),
+        model: formData.model.trim(),
+        machineName: formData.machineName.trim()
+      };
+
       const response = await fetch(`${backendUrl}/api/shed2machine`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(sanitizedData),
       });
 
       if (response.ok) {

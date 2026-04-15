@@ -1,6 +1,7 @@
 from fastapi import HTTPException
 from database import get_db
 from models.reviews_models import ReviewCreate
+from bson import ObjectId
 
 def create_review(review: ReviewCreate):
     db = get_db()
@@ -9,10 +10,17 @@ def create_review(review: ReviewCreate):
     
     collection = db["reviews"]
     review_data = review.model_dump()
-    # Convert datetime to string or let PyMongo handle it (PyMongo handles proper datetime objects)
     
     try:
         result = collection.insert_one(review_data)
+        
+        # When review is submitted, update the Machine's ScheduledTo status!
+        machines_col = db["Shed2machines"]
+        machines_col.update_one(
+            { "_id": ObjectId(review.machineId), "scheduledTo.engineerId": review.engineerId },
+            { "$set": { "scheduledTo.$.status": "completed" } }
+        )
+
         return {
             "message": "Review submitted successfully!",
             "id": str(result.inserted_id),

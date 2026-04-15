@@ -30,8 +30,9 @@ export default function Login() {
         const data = await response.json();
         localStorage.setItem('access_token', data.access_token);
         localStorage.setItem('user_name', data.name);
+        localStorage.setItem('user_id', data.user_id);
         showToast('Welcome back, ' + data.name, 'success');
-        setTimeout(() => navigate('/shed2'), 1500); 
+        setTimeout(() => navigate('/dashboard'), 1500); 
       } else {
         const err = await response.json();
         showToast(`Login failed: ${err.detail}`, 'error');
