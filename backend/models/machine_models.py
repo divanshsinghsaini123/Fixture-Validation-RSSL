@@ -19,3 +19,4 @@ class MachineAssignmentRequest(BaseModel):
     engineerId: str
     engineerName: str
     inspectionDate: date
+    status: str = "pending"

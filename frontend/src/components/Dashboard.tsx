@@ -60,6 +60,9 @@ export default function Dashboard() {
       machine.scheduledTo.forEach(assignment => {
         // filter for this specific engineer
         if (assignment.engineerId === userId) {
+          // If status wasn't originally saved in MongoDB before the fix, assume pending
+          if (!assignment.status) assignment.status = 'pending';
+
           myAssignments.push({ ...assignment, machine });
         }
       });
@@ -75,9 +78,12 @@ export default function Dashboard() {
   };
 
   // Filter Upcoming: pending status, sorted by date ascending
-  const today = new Date().toISOString().split('T')[0];
+  // Fix Timezone bug by shifting to local timezone offset
+  const now = new Date();
+  const localToday = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().split('T')[0];
+
   const upcomingAssignments = myAssignments
-    .filter(a => a.status === 'pending' && a.inspectionDate >= today)
+    .filter(a => a.status === 'pending' && a.inspectionDate >= localToday)
     .sort((a, b) => new Date(a.inspectionDate).getTime() - new Date(b.inspectionDate).getTime());
 
   return (
@@ -97,7 +103,7 @@ export default function Dashboard() {
           </div>
           <div className="flex items-center gap-3 mt-4 sm:mt-0">
             <button
-              onClick={() => navigate('/shed2')}
+              onClick={() => navigate('/create-assignment')}
               className="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl font-medium shadow-lg transition-transform active:scale-95"
             >
               + Create New Assignment

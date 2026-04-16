@@ -62,6 +62,7 @@ def login_engineer(credentials: EngineerLogin):
         "access_token": access_token,
         "token_type": "bearer",
         "user_id": str(user["_id"]),
+        "email": user.get("email", ""),
         "name": user["name"]
     }
 

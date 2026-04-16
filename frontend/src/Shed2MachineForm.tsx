@@ -19,6 +19,10 @@ const Shed2MachineForm: React.FC = () => {
       const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
       const token = localStorage.getItem('access_token');
 
+      if (formData.machineName.trim() === '' && formData.machineNumber.trim() === '' && formData.model.trim() === '') {
+        alert("Please Enter one of the following - MachineNumber OR MachineName OR Model")
+        return;
+      }
       const sanitizedData = {
         hollowShaftLine: formData.hollowShaftLine.trim().toLowerCase(),
         machineNumber: formData.machineNumber.trim(),
@@ -118,7 +122,6 @@ const Shed2MachineForm: React.FC = () => {
                   id="machineNumber"
                   value={formData.machineNumber}
                   onChange={handleChange}
-                  required
                   placeholder="E.g. MCH-9021"
                   className="w-full px-4 py-3 sm:py-3.5 bg-slate-950/50 border border-slate-700/60 rounded-xl text-slate-100 placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all shadow-inner"
                 />
@@ -137,7 +140,6 @@ const Shed2MachineForm: React.FC = () => {
                   id="model"
                   value={formData.model}
                   onChange={handleChange}
-                  required
                   placeholder="E.g. VX-Elite"
                   className="w-full px-4 py-3 sm:py-3.5 bg-slate-950/50 border border-slate-700/60 rounded-xl text-slate-100 placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all shadow-inner"
                 />
@@ -156,7 +158,6 @@ const Shed2MachineForm: React.FC = () => {
                   id="machineName"
                   value={formData.machineName}
                   onChange={handleChange}
-                  required
                   placeholder="E.g. Primary Axis Mill"
                   className="w-full px-4 py-3 sm:py-3.5 bg-slate-950/50 border border-slate-700/60 rounded-xl text-slate-100 placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all shadow-inner"
                 />

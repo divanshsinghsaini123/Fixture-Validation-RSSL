@@ -14,6 +14,7 @@ def create_machine(machine: Shed2MachineRegistration):
     
     try:
         result = collection.insert_one(machine_data)
+        machine_data["_id"] = str(machine_data["_id"])
         return {
             "message": "Machine registered successfully!",
             "id": str(result.inserted_id),
