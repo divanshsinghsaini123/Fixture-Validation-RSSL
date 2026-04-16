@@ -13,15 +13,45 @@ const Shed2MachineForm: React.FC = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form Submitted', formData);
-    alert('Form Submitted successfully!');
+    try {
+      const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
+      const token = localStorage.getItem('access_token');
+
+      const response = await fetch(`${backendUrl}/api/shed2machine`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        alert('Machine Registered Successfully!');
+        console.log('Backend response:', result);
+
+        // Reset form after successful submission
+        setFormData({
+          hollowShaftLine: '',
+          machineNumber: '',
+          model: '',
+          machineName: ''
+        });
+      } else {
+        alert('Failed to register machine. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      alert('Error connecting to the backend server.');
+    }
   };
 
   return (
     <div className="min-h-screen w-full bg-slate-950 flex items-center justify-center p-4 sm:p-6 lg:p-8 relative overflow-hidden font-sans text-slate-50">
-      
+
       {/* Background ambient lights */}
       <div className="pointer-events-none absolute inset-0 flex justify-center items-center overflow-hidden">
         <div className="absolute top-[-10%] md:top-[-20%] left-[-10%] w-64 md:w-96 h-64 md:h-96 bg-indigo-600 rounded-full mix-blend-screen filter blur-[80px] md:blur-[120px] opacity-40 animate-pulse"></div>
@@ -30,7 +60,7 @@ const Shed2MachineForm: React.FC = () => {
 
       {/* Form Card */}
       <div className="relative w-full max-w-2xl bg-slate-900/60 backdrop-blur-2xl border border-slate-700/50 rounded-3xl p-6 sm:p-10 shadow-2xl z-10 animate-in slide-in-from-bottom-6 fade-in duration-700">
-        
+
         {/* Header */}
         <div className="text-center mb-8 sm:mb-10">
           <div className="inline-flex items-center justify-center p-3 sm:p-4 bg-indigo-500/10 rounded-2xl mb-4 border border-indigo-500/20">
@@ -40,7 +70,7 @@ const Shed2MachineForm: React.FC = () => {
             </svg>
           </div>
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-br from-white via-slate-200 to-slate-500 bg-clip-text text-transparent">
-            Machine Registration
+            Shed2 Machine Registration
           </h2>
           <p className="text-slate-400 mt-2 text-sm sm:text-base px-4">
             Initialize and register a new machine configuration to your fleet.
@@ -48,12 +78,12 @@ const Shed2MachineForm: React.FC = () => {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
             {/* Field: Hollow Shaft Line */}
             <div className="flex flex-col gap-2 group">
               <label htmlFor="hollowShaftLine" className="text-sm font-medium text-slate-300 ml-1 transition-colors group-focus-within:text-indigo-400">
-                Hollow Shaft Line <span className="text-rose-500">*</span>
+                Line <span className="text-rose-500">*</span>
               </label>
               <div className="relative">
                 <input
@@ -133,7 +163,7 @@ const Shed2MachineForm: React.FC = () => {
               className="w-full relative group overflow-hidden rounded-xl bg-gradient-to-r from-indigo-500 hover:from-indigo-400 to-fuchsia-600 hover:to-fuchsia-500 border border-indigo-500/30 text-white font-semibold text-lg sm:text-base py-3.5 sm:py-4 px-6 transition-all duration-300 shadow-[0_0_20px_rgba(99,102,241,0.2)] hover:shadow-[0_0_30px_rgba(99,102,241,0.4)] hover:-translate-y-0.5 active:translate-y-0"
             >
               <div className="flex items-center justify-center gap-2 relative z-10">
-                <span>Complete Registration</span>
+                <span>Register Machine</span>
                 <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 transition-transform group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
                 </svg>
