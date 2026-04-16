@@ -13,6 +13,7 @@ export default function CreateAssignment() {
   const [machines, setMachines] = useState<Machine[]>([]);
   const [selectedLine, setSelectedLine] = useState('');
   const [selectedMachineId, setSelectedMachineId] = useState('');
+  const [activeDropdown, setActiveDropdown] = useState<'name'|'number'|'model'|''>('');
   const [inspectionDate, setInspectionDate] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -121,6 +122,7 @@ export default function CreateAssignment() {
                 onChange={(e) => {
                   setSelectedLine(e.target.value);
                   setSelectedMachineId(''); // reset machine selection
+                  setActiveDropdown('');
                 }}
               >
                 <option value="" disabled>-- Select a Line --</option>
@@ -141,10 +143,13 @@ export default function CreateAssignment() {
                     <label className="text-xs text-slate-400 ml-1">By Machine Name</label>
                     <select
                       className="w-full px-3 py-2 bg-slate-950/50 border border-slate-700/60 rounded-xl text-slate-100 focus:outline-none focus:border-indigo-500 text-sm"
-                      value={selectedMachineId} // we map all to the same ID implicitly, but track changing
-                      onChange={(e) => setSelectedMachineId(e.target.value)}
+                      value={activeDropdown === 'name' ? selectedMachineId : ''}
+                      onChange={(e) => {
+                        setActiveDropdown('name');
+                        setSelectedMachineId(e.target.value);
+                      }}
                     >
-                      <option value="" disabled={selectedMachineId !== ""}>-- Select Name --</option>
+                      <option value="" disabled>-- Select Name --</option>
                       {availableMachines.filter(m => m.machineName.trim()).map(m => (
                         <option key={m._id} value={m._id}>{m.machineName}</option>
                       ))}
@@ -156,10 +161,13 @@ export default function CreateAssignment() {
                     <label className="text-xs text-slate-400 ml-1">By Machine Number</label>
                     <select
                       className="w-full px-3 py-2 bg-slate-950/50 border border-slate-700/60 rounded-xl text-slate-100 focus:outline-none focus:border-indigo-500 text-sm"
-                      value={selectedMachineId}
-                      onChange={(e) => setSelectedMachineId(e.target.value)}
+                      value={activeDropdown === 'number' ? selectedMachineId : ''}
+                      onChange={(e) => {
+                        setActiveDropdown('number');
+                        setSelectedMachineId(e.target.value);
+                      }}
                     >
-                      <option value="" disabled={selectedMachineId !== ""}>-- Select Number --</option>
+                      <option value="" disabled>-- Select Number --</option>
                       {availableMachines.filter(m => m.machineNumber.trim()).map(m => (
                         <option key={m._id} value={m._id}>{m.machineNumber}</option>
                       ))}
@@ -171,10 +179,13 @@ export default function CreateAssignment() {
                     <label className="text-xs text-slate-400 ml-1">By Model</label>
                     <select
                       className="w-full px-3 py-2 bg-slate-950/50 border border-slate-700/60 rounded-xl text-slate-100 focus:outline-none focus:border-indigo-500 text-sm"
-                      value={selectedMachineId}
-                      onChange={(e) => setSelectedMachineId(e.target.value)}
+                      value={activeDropdown === 'model' ? selectedMachineId : ''}
+                      onChange={(e) => {
+                        setActiveDropdown('model');
+                        setSelectedMachineId(e.target.value);
+                      }}
                     >
-                      <option value="" disabled={selectedMachineId !== ""}>-- Select Model --</option>
+                      <option value="" disabled>-- Select Model --</option>
                       {availableMachines.filter(m => m.model.trim()).map(m => (
                         <option key={m._id} value={m._id}>{m.model}</option>
                       ))}
@@ -185,7 +196,10 @@ export default function CreateAssignment() {
                 <div className="flex justify-end pr-1 pt-1">
                   <button 
                     type="button" 
-                    onClick={() => setSelectedMachineId('')} 
+                    onClick={() => {
+                      setSelectedMachineId('');
+                      setActiveDropdown('');
+                    }} 
                     className="text-xs text-slate-500 hover:text-rose-400 transition-colors"
                   >
                     Clear Selection
