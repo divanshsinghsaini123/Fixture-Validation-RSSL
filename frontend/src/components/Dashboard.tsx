@@ -103,6 +103,12 @@ export default function Dashboard() {
           </div>
           <div className="flex items-center gap-3 mt-4 sm:mt-0">
             <button
+              onClick={() => navigate('/dashboard/data')}
+              className="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-xl font-medium shadow-lg transition-transform active:scale-95"
+            >
+              ADD SHED's data
+            </button>
+            <button
               onClick={() => navigate('/create-assignment')}
               className="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl font-medium shadow-lg transition-transform active:scale-95"
             >

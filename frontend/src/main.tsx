@@ -7,6 +7,7 @@ import Login from './components/Login.tsx'
 import Register from './components/Register.tsx'
 import Dashboard from './components/Dashboard.tsx'
 import CreateAssignment from './components/CreateAssignment.tsx'
+import DataDashboard from './components/DataDashboard.tsx'
 
 // Basic guard component protecting routes if JWT token doesn't exist
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
@@ -26,16 +27,22 @@ createRoot(document.getElementById('root')!).render(
             <Dashboard />
           </PrivateRoute>
         } />
+        <Route path="/dashboard/shed2" element={
+          <PrivateRoute>
+            <Shed2MachineForm />
+          </PrivateRoute>
+        } />
+        <Route path="/dashboard/data" element={
+          <PrivateRoute>
+            <DataDashboard />
+          </PrivateRoute>
+        } />
         <Route path="/create-assignment" element={
           <PrivateRoute>
             <CreateAssignment />
           </PrivateRoute>
         } />
-        <Route path="/shed2" element={
-          <PrivateRoute>
-            <Shed2MachineForm />
-          </PrivateRoute>
-        } />
+
       </Routes>
     </BrowserRouter>
   </StrictMode>,
