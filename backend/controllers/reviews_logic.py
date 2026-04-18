@@ -21,6 +21,10 @@ def create_review(review: ReviewCreate):
             { "$set": { "scheduledTo.$.status": "completed" } }
         )
 
+        # PyMongo injects _id as an ObjectId into the mutated dict, so we convert it to string for JSON serialization
+        if "_id" in review_data:
+            review_data["_id"] = str(review_data["_id"])
+
         return {
             "message": "Review submitted successfully!",
             "id": str(result.inserted_id),

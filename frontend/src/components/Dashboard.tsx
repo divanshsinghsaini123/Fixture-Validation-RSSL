@@ -183,7 +183,11 @@ export default function Dashboard() {
                         <div className="text-sm text-slate-400">Due Date</div>
                         <div className="font-semibold text-slate-200">{new Date(task.inspectionDate).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}</div>
                       </div>
-                      <button className="h-10 w-10 rounded-full bg-slate-700 hover:bg-slate-600 flex items-center justify-center text-white transition-colors">
+                      <button 
+                        onClick={() => navigate('/review', { state: { task } })}
+                        title="Add Review"
+                        className="h-10 w-10 rounded-full bg-slate-700 hover:bg-emerald-600 flex items-center justify-center text-white transition-all active:scale-95 shadow-md"
+                      >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
                       </button>
                     </div>
