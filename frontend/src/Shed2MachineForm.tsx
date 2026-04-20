@@ -7,10 +7,42 @@ const Shed2MachineForm: React.FC = () => {
     model: '',
     machineName: ''
   });
+  const [checkSheetTemplate, setCheckSheetTemplate] = useState<any[]>([]);
+  const [newRow, setNewRow] = useState({
+    sNo: '',
+    contents: '',
+    specification: '',
+    inscription: '',
+    evaluation: '',
+    frequency: ''
+  });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleRowChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setNewRow(prev => ({ ...prev, [name]: value }));
+  };
+
+  const addRow = () => {
+    if (newRow.sNo && newRow.contents) {
+      setCheckSheetTemplate(prev => [...prev, newRow]);
+      setNewRow({
+        sNo: '',
+        contents: '',
+        specification: '',
+        inscription: '',
+        evaluation: '',
+        frequency: ''
+      });
+    }
+  };
+
+  const removeRow = (index: number) => {
+    setCheckSheetTemplate(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -27,7 +59,8 @@ const Shed2MachineForm: React.FC = () => {
         hollowShaftLine: formData.hollowShaftLine.trim().toLowerCase(),
         machineNumber: formData.machineNumber.trim(),
         model: formData.model.trim(),
-        machineName: formData.machineName.trim()
+        machineName: formData.machineName.trim(),
+        checkSheetTemplate: checkSheetTemplate
       };
 
       const response = await fetch(`${backendUrl}/api/shed2machine`, {
@@ -51,6 +84,7 @@ const Shed2MachineForm: React.FC = () => {
           model: '',
           machineName: ''
         });
+        setCheckSheetTemplate([]);
       } else {
         alert('Failed to register machine. Please try again.');
       }
@@ -162,6 +196,80 @@ const Shed2MachineForm: React.FC = () => {
                   className="w-full px-4 py-3 sm:py-3.5 bg-slate-950/50 border border-slate-700/60 rounded-xl text-slate-100 placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all shadow-inner"
                 />
               </div>
+            </div>
+          </div>
+
+          {/* Check Sheet Template Section */}
+          <div className="pt-6 border-t border-slate-700/50">
+            <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-indigo-400" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0115.414 6L12 2.586A2 2 0 0010.586 2H6zm2 10a1 1 0 10-2 0v3a1 1 0 102 0v-3zm2-3a1 1 0 011 1v5a1 1 0 11-2 0v-5a1 1 0 011-1zm4-1a1 1 0 10-2 0v7a1 1 0 102 0V8z" clipRule="evenodd" />
+              </svg>
+              Machine Check Sheet Template
+            </h3>
+
+            <div className="overflow-x-auto mb-6 rounded-xl border border-slate-700/50">
+              <table className="w-full text-left text-sm">
+                <thead className="bg-slate-800/50 text-slate-300">
+                  <tr>
+                    <th className="px-4 py-3 font-semibold">S.No</th>
+                    <th className="px-4 py-3 font-semibold">Contents</th>
+                    <th className="px-4 py-3 font-semibold">Specification</th>
+                    <th className="px-4 py-3 font-semibold">Inscription</th>
+                    <th className="px-4 py-3 font-semibold">Evaluation</th>
+                    <th className="px-4 py-3 font-semibold">Freq.</th>
+                    <th className="px-4 py-3 font-semibold text-center">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800">
+                  {checkSheetTemplate.map((row, idx) => (
+                    <tr key={idx} className="text-slate-200">
+                      <td className="px-4 py-3">{row.sNo}</td>
+                      <td className="px-4 py-3">{row.contents}</td>
+                      <td className="px-4 py-3">{row.specification}</td>
+                      <td className="px-4 py-3">{row.inscription}</td>
+                      <td className="px-4 py-3">{row.evaluation}</td>
+                      <td className="px-4 py-3">{row.frequency}</td>
+                      <td className="px-4 py-3 text-center">
+                        <button type="button" onClick={() => removeRow(idx)} className="text-rose-400 hover:text-rose-300">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                          </svg>
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                  {checkSheetTemplate.length === 0 && (
+                    <tr>
+                      <td colSpan={7} className="px-4 py-8 text-center text-slate-500 italic">
+                        No rows added yet. Define your machine inspection template below.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Row Builder Inputs */}
+            <div className="bg-slate-950/30 p-4 rounded-2xl border border-slate-700/30 space-y-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+                <input type="text" name="sNo" value={newRow.sNo} onChange={handleRowChange} placeholder="S.No" className="bg-slate-900/50 border border-slate-700/50 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500" />
+                <input type="text" name="contents" value={newRow.contents} onChange={handleRowChange} placeholder="Contents" className="bg-slate-900/50 border border-slate-700/50 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500" />
+                <input type="text" name="specification" value={newRow.specification} onChange={handleRowChange} placeholder="Specification" className="bg-slate-900/50 border border-slate-700/50 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500" />
+                <input type="text" name="inscription" value={newRow.inscription} onChange={handleRowChange} placeholder="Inscription" className="bg-slate-900/50 border border-slate-700/50 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500" />
+                <input type="text" name="evaluation" value={newRow.evaluation} onChange={handleRowChange} placeholder="Evaluation" className="bg-slate-900/50 border border-slate-700/50 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500" />
+                <input type="text" name="frequency" value={newRow.frequency} onChange={handleRowChange} placeholder="Freq." className="bg-slate-900/50 border border-slate-700/50 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500" />
+              </div>
+              <button
+                type="button"
+                onClick={addRow}
+                className="flex items-center gap-2 bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-400 px-4 py-2 rounded-lg text-sm font-medium transition-all"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+                </svg>
+                Add Row to Template
+              </button>
             </div>
           </div>
 

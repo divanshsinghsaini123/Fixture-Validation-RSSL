@@ -1,6 +1,17 @@
 from pydantic import BaseModel
 from datetime import datetime
-from typing import Optional
+from typing import List, Optional
+
+class FilledCheckSheetRow(BaseModel):
+    sNo: str
+    contents: str
+    specification: str
+    inscription: str
+    evaluation: str
+    frequency: str
+    beforeStatus: str
+    afterStatus: str
+    remark: str
 
 class ReviewCreate(BaseModel):
     machineId: str
@@ -8,5 +19,5 @@ class ReviewCreate(BaseModel):
     engineerName: str
     reviewDate: datetime
     status: str
-    comments: str
+    checkSheetRows: List[FilledCheckSheetRow]
     score: Optional[float] = None

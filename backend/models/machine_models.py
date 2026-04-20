@@ -8,12 +8,21 @@ class Assignment(BaseModel):
     inspectionDate: date
     status: str = "pending" # states: pending, completed, missed
 
+class CheckSheetRow(BaseModel):
+    sNo: str
+    contents: str
+    specification: str
+    inscription: str
+    evaluation: str
+    frequency: str
+
 class Shed2MachineRegistration(BaseModel):
     hollowShaftLine: str
     machineNumber: str
     model: str
     machineName: str
     scheduledTo: List[Assignment] = Field(default_factory=list)
+    checkSheetTemplate: List[CheckSheetRow] = Field(default_factory=list)
 
 class MachineAssignmentRequest(BaseModel):
     engineerId: str

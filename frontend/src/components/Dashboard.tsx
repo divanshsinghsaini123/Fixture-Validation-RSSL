@@ -15,6 +15,7 @@ interface Machine {
   machineName: string;
   model: string;
   scheduledTo?: Assignment[];
+  checkSheetTemplate?: any[];
 }
 
 export default function Dashboard() {

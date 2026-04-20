@@ -7,7 +7,14 @@ export default function MachineReview() {
   const task = state?.task;
 
   const [status, setStatus] = useState('Pass');
-  const [comments, setComments] = useState('');
+  const [checkSheetRows, setCheckSheetRows] = useState<any[]>(
+    task?.machine?.checkSheetTemplate?.map((row: any) => ({
+      ...row,
+      beforeStatus: '',
+      afterStatus: '',
+      remark: ''
+    })) || []
+  );
   const [score, setScore] = useState<number | ''>('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -18,7 +25,7 @@ export default function MachineReview() {
         <div className="text-center bg-slate-900 border border-slate-800 p-8 rounded-2xl shadow-lg max-w-md w-full">
           <h2 className="text-xl font-bold text-rose-400 mb-4">No Task Selected</h2>
           <p className="text-slate-400 mb-6">Please start a review from your Dashboard's upcoming tasks.</p>
-          <button 
+          <button
             onClick={() => navigate('/dashboard')}
             className="w-full bg-slate-800 hover:bg-slate-700 text-white py-3 rounded-xl transition-all"
           >
@@ -48,7 +55,7 @@ export default function MachineReview() {
         engineerName: engineerName,
         reviewDate: new Date().toISOString(),
         status: status,
-        comments: comments,
+        checkSheetRows: checkSheetRows,
         score: score === '' ? null : Number(score)
       };
 
@@ -77,14 +84,14 @@ export default function MachineReview() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 p-4 sm:p-8 font-sans">
       <div className="max-w-4xl mx-auto space-y-6">
-        
+
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold text-white mb-2">Machine Validation Review</h1>
             <p className="text-slate-400">Complete your scheduled inspection and record the results below.</p>
           </div>
-          <button 
+          <button
             onClick={() => navigate('/dashboard')}
             className="bg-slate-800 hover:bg-slate-700 text-white px-5 py-2.5 rounded-xl font-medium shadow-sm transition-all flex items-center gap-2"
           >
@@ -121,7 +128,7 @@ export default function MachineReview() {
         {/* Review Form */}
         <form onSubmit={handleSubmit} className="bg-slate-900 border border-slate-800 rounded-2xl shadow-lg p-6 sm:p-8">
           <h2 className="text-xl font-bold text-white mb-6 border-b border-slate-800 pb-4">Inspection Validation Data</h2>
-          
+
           {error && (
             <div className="mb-6 p-4 bg-rose-500/10 border border-rose-500/50 rounded-xl text-rose-400 text-sm">
               {error}
@@ -135,7 +142,7 @@ export default function MachineReview() {
                 <label className="block text-sm font-medium text-slate-300">
                   Validation Status *
                 </label>
-                <select 
+                <select
                   required
                   value={status}
                   onChange={(e) => setStatus(e.target.value)}
@@ -152,7 +159,7 @@ export default function MachineReview() {
                 <label className="block text-sm font-medium text-slate-300">
                   Validation Score (1-10) Optional
                 </label>
-                <input 
+                <input
                   type="number"
                   min="1"
                   max="10"
@@ -164,19 +171,88 @@ export default function MachineReview() {
               </div>
             </div>
 
-            {/* Comments */}
-            <div className="space-y-2">
+            {/* Template Table for Remarks */}
+            <div className="space-y-4">
               <label className="block text-sm font-medium text-slate-300">
-                Inspection Notes / Comments *
+                Inspection Check Sheet - Record Remarks *
               </label>
-              <textarea 
-                required
-                rows={5}
-                value={comments}
-                onChange={(e) => setComments(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 text-slate-200 text-sm rounded-xl focus:ring-emerald-500 focus:border-emerald-500 block p-4 focus:outline-none transition-all resize-none"
-                placeholder="Detail the findings of your validation check... (parameters, visual conditions, anomalies, etc.)"
-              ></textarea>
+
+              <div className="overflow-x-auto rounded-xl border border-slate-800 bg-slate-950/50">
+                <table className="w-full text-left text-sm border-collapse">
+                  <thead className="bg-slate-900 text-slate-400">
+                    <tr>
+                      <th className="px-4 py-3 font-semibold border-b border-slate-800">S.No</th>
+                      <th className="px-4 py-3 font-semibold border-b border-slate-800">Contents</th>
+                      <th className="px-4 py-3 font-semibold border-b border-slate-800">Specification</th>
+                      <th className="px-4 py-3 font-semibold border-b border-slate-800">Inscription</th>
+                      <th className="px-4 py-3 font-semibold border-b border-slate-800">Evaluation</th>
+                      <th className="px-4 py-3 font-semibold border-b border-slate-800 text-center">Before</th>
+                      <th className="px-4 py-3 font-semibold border-b border-slate-800 text-center">After</th>
+                      <th className="px-4 py-3 font-semibold border-b border-slate-800">Remark / Observation</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-800">
+                    {checkSheetRows.map((row, idx) => (
+                      <tr key={idx} className="hover:bg-slate-900/30 transition-colors">
+                        <td className="px-4 py-4 text-slate-400">{row.sNo}</td>
+                        <td className="px-4 py-4 font-medium text-slate-200">{row.contents}</td>
+                        <td className="px-4 py-4 text-slate-300">{row.specification}</td>
+                        <td className="px-4 py-4 text-slate-400 text-xs">{row.inscription}</td>
+                        <td className="px-4 py-4 text-slate-400">{row.evaluation}</td>
+                        <td className="px-4 py-2">
+                          <input
+                            type="text"
+                            required
+                            value={row.beforeStatus}
+                            onChange={(e) => {
+                              const newRows = [...checkSheetRows];
+                              newRows[idx].beforeStatus = e.target.value;
+                              setCheckSheetRows(newRows);
+                            }}
+                            className="w-16 bg-slate-900 border border-slate-800 text-slate-200 text-sm rounded-lg text-center focus:ring-emerald-500 focus:border-emerald-500 block p-2 focus:outline-none transition-all"
+                            placeholder="OK"
+                          />
+                        </td>
+                        <td className="px-4 py-2">
+                          <input
+                            type="text"
+                            required
+                            value={row.afterStatus}
+                            onChange={(e) => {
+                              const newRows = [...checkSheetRows];
+                              newRows[idx].afterStatus = e.target.value;
+                              setCheckSheetRows(newRows);
+                            }}
+                            className="w-16 bg-slate-900 border border-slate-800 text-slate-200 text-sm rounded-lg text-center focus:ring-emerald-500 focus:border-emerald-500 block p-2 focus:outline-none transition-all"
+                            placeholder="OK"
+                          />
+                        </td>
+                        <td className="px-4 py-2">
+                          <input
+                            type="text"
+                            required
+                            value={row.remark}
+                            onChange={(e) => {
+                              const newRows = [...checkSheetRows];
+                              newRows[idx].remark = e.target.value;
+                              setCheckSheetRows(newRows);
+                            }}
+                            className="w-full bg-slate-900 border border-slate-800 text-slate-200 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block p-2.5 focus:outline-none transition-all"
+                            placeholder="Add remark..."
+                          />
+                        </td>
+                      </tr>
+                    ))}
+                    {checkSheetRows.length === 0 && (
+                      <tr>
+                        <td colSpan={6} className="px-4 py-8 text-center text-slate-500 italic">
+                          No check sheet template defined for this machine.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
 
