@@ -23,6 +23,7 @@ class Shed2MachineRegistration(BaseModel):
     machineName: str
     scheduledTo: List[Assignment] = Field(default_factory=list)
     checkSheetTemplate: List[CheckSheetRow] = Field(default_factory=list)
+    machineImages: List[str] = Field(default_factory=list)
 
 class MachineAssignmentRequest(BaseModel):
     engineerId: str

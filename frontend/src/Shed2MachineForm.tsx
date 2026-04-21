@@ -45,6 +45,49 @@ const Shed2MachineForm: React.FC = () => {
     setCheckSheetTemplate(prev => prev.filter((_, i) => i !== index));
   };
 
+  const [machineImages, setMachineImages] = useState<string[]>([]);
+  const [uploading, setUploading] = useState(false);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setUploading(true);
+    const formData = new FormData();
+    for (let i = 0; i < files.length; i++) {
+      formData.append('files', files[i]);
+    }
+
+    try {
+      const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
+      const token = localStorage.getItem('access_token');
+      
+      const response = await fetch(`${backendUrl}/api/upload`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formData
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setMachineImages(prev => [...prev, ...data.urls]);
+      } else {
+        alert('Failed to upload images');
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert('Error uploading images');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const removeImage = (urlToRemove: string) => {
+    setMachineImages(prev => prev.filter(url => url !== urlToRemove));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -60,7 +103,8 @@ const Shed2MachineForm: React.FC = () => {
         machineNumber: formData.machineNumber.trim(),
         model: formData.model.trim(),
         machineName: formData.machineName.trim(),
-        checkSheetTemplate: checkSheetTemplate
+        checkSheetTemplate: checkSheetTemplate,
+        machineImages: machineImages
       };
 
       const response = await fetch(`${backendUrl}/api/shed2machine`, {
@@ -85,6 +129,7 @@ const Shed2MachineForm: React.FC = () => {
           machineName: ''
         });
         setCheckSheetTemplate([]);
+        setMachineImages([]);
       } else {
         alert('Failed to register machine. Please try again.');
       }
@@ -196,6 +241,52 @@ const Shed2MachineForm: React.FC = () => {
                   className="w-full px-4 py-3 sm:py-3.5 bg-slate-950/50 border border-slate-700/60 rounded-xl text-slate-100 placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all shadow-inner"
                 />
               </div>
+            </div>
+          </div>
+
+          {/* Image Upload Section */}
+          <div className="pt-6 border-t border-slate-700/50">
+            <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-indigo-400" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
+              </svg>
+              Machine Images
+            </h3>
+            
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center justify-center w-full">
+                <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-700 border-dashed rounded-xl cursor-pointer bg-slate-950/30 hover:bg-slate-950/50 transition-all">
+                  <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                    <svg className="w-8 h-8 mb-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                    <p className="mb-2 text-sm text-slate-400">
+                      <span className="font-semibold">{uploading ? 'Uploading...' : 'Click to upload'}</span> or drag and drop
+                    </p>
+                    <p className="text-xs text-slate-500">PNG, JPG or JPEG (MAX. 5MB)</p>
+                  </div>
+                  <input type="file" multiple className="hidden" onChange={handleImageUpload} disabled={uploading} accept="image/*" />
+                </label>
+              </div>
+
+              {machineImages.length > 0 && (
+                <div className="grid grid-cols-3 sm:grid-cols-4 gap-4 mt-2">
+                  {machineImages.map((url, idx) => (
+                    <div key={idx} className="relative group aspect-square rounded-lg overflow-hidden border border-slate-700">
+                      <img src={url} alt={`Machine ${idx}`} className="w-full h-full object-cover" />
+                      <button 
+                        type="button"
+                        onClick={() => removeImage(url)}
+                        className="absolute top-1 right-1 bg-rose-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 

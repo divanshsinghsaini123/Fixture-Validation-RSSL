@@ -8,7 +8,7 @@ router = APIRouter(prefix="/api/shed2machine", tags=["Shed2Machine"])
 @router.post("")
 def route_register_machine(machine: Shed2MachineRegistration):
     # Delegate logic to controller
-    print("request aayi thiiiiiiiiiiiiiiiiiiiiiiiiiiii")
+    # print("request aayi thiiiiiiiiiiiiiiiiiiiiiiiiiiii")
     return create_machine(machine)
 
 @router.get("")  # Becomes /api/shed2machines
