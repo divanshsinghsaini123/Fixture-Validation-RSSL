@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useGoogleLogin } from '@react-oauth/google';
+import { createCalendarEvent } from '../utils/googleCalendar';
 
 interface Machine {
   _id: string;
@@ -13,7 +15,7 @@ export default function CreateAssignment() {
   const [machines, setMachines] = useState<Machine[]>([]);
   const [selectedLine, setSelectedLine] = useState('');
   const [selectedMachineId, setSelectedMachineId] = useState('');
-  const [activeDropdown, setActiveDropdown] = useState<'name'|'number'|'model'|''>('');
+  const [activeDropdown, setActiveDropdown] = useState<'name' | 'number' | 'model' | ''>('');
   const [inspectionDate, setInspectionDate] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -52,46 +54,69 @@ export default function CreateAssignment() {
   // Filter machines by selected line
   const availableMachines = machines.filter(m => m.hollowShaftLine === selectedLine);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const performAssignmentAndCalendarSync = async (googleAccessToken: string) => {
+    setLoading(true);
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
+    const appToken = localStorage.getItem('access_token'); // Backend JWT
+
+    try {
+      const payload = {
+        engineerId: userId,
+        engineerName: userName,
+        inspectionDate: inspectionDate,
+        googleEventId: ""
+      };
+      // 2. Google Calendar Event Creation using Google Access Token
+      const calendarResponse = await createCalendarEvent(googleAccessToken, payload);
+      if (calendarResponse) {
+        console.log("google api respose")
+        payload.googleEventId = calendarResponse
+      }
+
+      // 1. Backend Assignment Creation
+      const response = await fetch(`${backendUrl}/api/shed2machine/${selectedMachineId}/assign`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${appToken}`
+        },
+        body: JSON.stringify(payload),
+      });
+
+
+      if (response.ok) {
+        alert("Assignment and Calendar Event created successfully!");
+        navigate('/dashboard');
+      } else {
+        const err = await response.json();
+        alert(`Failed: ${err.detail || 'Could not sync with Calendar'}`);
+      }
+    } catch (error) {
+      alert("Error connecting to server or Google API.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = useGoogleLogin({
+    onSuccess: (tokenResponse) => {
+      // Ye Google ka real access token hai
+      performAssignmentAndCalendarSync(tokenResponse.access_token);
+    },
+    onError: () => {
+      alert('Google Login Failed. Cannot create calendar event.');
+    },
+    scope: 'https://www.googleapis.com/auth/calendar.events'
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedMachineId) {
       alert("Please select a machine first.");
       return;
     }
-
-    setLoading(true);
-    const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
-    const token = localStorage.getItem('access_token');
-
-    try {
-      // Backend model: MachineAssignmentRequest
-      const payload = {
-        engineerId: userId,
-        engineerName: userName,
-        inspectionDate: inspectionDate
-      };
-
-      const response = await fetch(`${backendUrl}/api/shed2machine/${selectedMachineId}/assign`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (response.ok) {
-        alert("Assignment created successfully!");
-        navigate('/dashboard');
-      } else {
-        const err = await response.json();
-        alert(`Failed: ${err.detail}`);
-      }
-    } catch (error) {
-      alert("Error connecting to server.");
-    } finally {
-      setLoading(false);
-    }
+    // Form submit hote hi pehle Google permission mangenge
+    handleGoogleLogin();
   };
 
   return (
@@ -136,7 +161,7 @@ export default function CreateAssignment() {
             {selectedLine && (
               <div className="space-y-4 animate-in fade-in slide-in-from-top-4 duration-300 bg-slate-900/50 p-4 border border-slate-700/50 rounded-xl">
                 <label className="text-sm font-medium text-indigo-300">2. Select Machine (Pick any ONE dropdown)</label>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {/* Select by Name */}
                   <div className="space-y-1">
@@ -194,12 +219,12 @@ export default function CreateAssignment() {
                 </div>
 
                 <div className="flex justify-end pr-1 pt-1">
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     onClick={() => {
                       setSelectedMachineId('');
                       setActiveDropdown('');
-                    }} 
+                    }}
                     className="text-xs text-slate-500 hover:text-rose-400 transition-colors"
                   >
                     Clear Selection

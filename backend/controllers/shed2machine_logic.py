@@ -72,3 +72,23 @@ def assign_engineer_to_machine(machine_id: str, assignment_data):
         return {"message": "Engineer assigned to machine successfully!"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+def delete_assignment(machine_id: str, engineer_id: str, inspection_date: str):
+    db = get_db()
+    if db is None:
+        raise HTTPException(status_code=500, detail="Database error.")
+        
+    collection = db["Shed2machines"]
+    try:
+        # Pull the assignment from the scheduledTo array that matches engineerId and inspectionDate
+        result = collection.update_one(
+            {"_id": ObjectId(machine_id)},
+            {"$pull": {"scheduledTo": {"engineerId": engineer_id, "inspectionDate": inspection_date}}}
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Machine not found")
+            
+        return {"message": "Assignment deleted successfully!"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

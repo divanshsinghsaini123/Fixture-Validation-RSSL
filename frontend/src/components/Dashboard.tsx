@@ -54,6 +54,30 @@ export default function Dashboard() {
     navigate('/login');
   };
 
+  const handleDeleteAssignment = async (machineId: string, inspectionDate: string) => {
+    if (!window.confirm('Are you sure you want to delete this assignment?')) return;
+
+    try {
+      const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
+      const token = localStorage.getItem('access_token');
+      
+      const response = await fetch(`${backendUrl}/api/shed2machine/${machineId}/assignment/${userId}/${inspectionDate}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (response.ok) {
+        // Refresh data
+        fetchData();
+      } else {
+        alert('Failed to delete assignment');
+      }
+    } catch (error) {
+      console.error('Error deleting assignment:', error);
+      alert('An error occurred while deleting the assignment');
+    }
+  };
+
   // Process Assignments
   const myAssignments: (Assignment & { machine: Machine })[] = [];
   machines.forEach(machine => {
@@ -184,13 +208,22 @@ export default function Dashboard() {
                         <div className="text-sm text-slate-400">Due Date</div>
                         <div className="font-semibold text-slate-200">{new Date(task.inspectionDate).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}</div>
                       </div>
-                      <button 
-                        onClick={() => navigate('/review', { state: { task } })}
-                        title="Add Review"
-                        className="h-10 w-10 rounded-full bg-slate-700 hover:bg-emerald-600 flex items-center justify-center text-white transition-all active:scale-95 shadow-md"
-                      >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
-                      </button>
+                      <div className="flex gap-2">
+                        <button 
+                          onClick={() => navigate('/review', { state: { task } })}
+                          title="Add Review"
+                          className="h-10 w-10 rounded-full bg-slate-700 hover:bg-emerald-600 flex items-center justify-center text-white transition-all active:scale-95 shadow-md"
+                        >
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
+                        </button>
+                        <button 
+                          onClick={() => handleDeleteAssignment(task.machine._id, task.inspectionDate)}
+                          title="Delete Assignment"
+                          className="h-10 w-10 rounded-full bg-slate-700 hover:bg-rose-600/20 hover:text-rose-400 flex items-center justify-center text-slate-400 transition-all active:scale-95 border border-slate-700 hover:border-rose-500/50 shadow-md"
+                        >
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}

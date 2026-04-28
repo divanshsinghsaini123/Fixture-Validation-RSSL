@@ -1,6 +1,7 @@
 import React, { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import './index.css'
 import Shed2MachineForm from './Shed2MachineForm.tsx'
 import Login from './components/Login.tsx'
@@ -18,38 +19,40 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
-        <Route path="/dashboard" element={
-          <PrivateRoute>
-            <Dashboard />
-          </PrivateRoute>
-        } />
-        <Route path="/dashboard/shed2" element={
-          <PrivateRoute>
-            <Shed2MachineForm />
-          </PrivateRoute>
-        } />
-        <Route path="/dashboard/data" element={
-          <PrivateRoute>
-            <DataDashboard />
-          </PrivateRoute>
-        } />
-        <Route path="/create-assignment" element={
-          <PrivateRoute>
-            <CreateAssignment />
-          </PrivateRoute>
-        } />
-        <Route path="/review" element={
-          <PrivateRoute>
-            <MachineReview />
-          </PrivateRoute>
-        } />
+    <GoogleOAuthProvider clientId="410299022339-kv1hg90353731dhmi8ci5nc8hqfa0f4v.apps.googleusercontent.com">
+      <BrowserRouter>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          <Route path="/dashboard" element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          } />
+          <Route path="/dashboard/shed2" element={
+            <PrivateRoute>
+              <Shed2MachineForm />
+            </PrivateRoute>
+          } />
+          <Route path="/dashboard/data" element={
+            <PrivateRoute>
+              <DataDashboard />
+            </PrivateRoute>
+          } />
+          <Route path="/create-assignment" element={
+            <PrivateRoute>
+              <CreateAssignment />
+            </PrivateRoute>
+          } />
+          <Route path="/review" element={
+            <PrivateRoute>
+              <MachineReview />
+            </PrivateRoute>
+          } />
 
-      </Routes>
-    </BrowserRouter>
+        </Routes>
+      </BrowserRouter>
+    </GoogleOAuthProvider>
   </StrictMode>,
 )
