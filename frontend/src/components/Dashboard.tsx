@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import { useGoogleLogin } from '@react-oauth/google';
+import { deleteCalendarEvent } from '../utils/googleCalendar';
 interface Assignment {
   engineerId: string;
   engineerName: string;
   inspectionDate: string;
   status: string;
+  googleEventId?: string;
 }
 
 interface Machine {
@@ -53,15 +55,23 @@ export default function Dashboard() {
     localStorage.clear();
     navigate('/login');
   };
+  // Temporary state to hold deletion targets while Google Auth happens
+  const [taskToDelete, setTaskToDelete] = useState<{ machineId: string, inspectionDate: string, googleEventId?: string } | null>(null);
 
-  const handleDeleteAssignment = async (machineId: string, inspectionDate: string) => {
-    if (!window.confirm('Are you sure you want to delete this assignment?')) return;
+  const performBackendAndCalendarDeletion = async (googleAccessToken: string) => {
+    if (!taskToDelete) return;
 
     try {
       const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
       const token = localStorage.getItem('access_token');
-      
-      const response = await fetch(`${backendUrl}/api/shed2machine/${machineId}/assignment/${userId}/${inspectionDate}`, {
+
+      // 1. Delete from Google Calendar (if event ID exists)
+      if (taskToDelete.googleEventId) {
+        await deleteCalendarEvent(googleAccessToken, taskToDelete.googleEventId);
+      }
+
+      // 2. Delete from Backend
+      const response = await fetch(`${backendUrl}/api/shed2machine/${taskToDelete.machineId}/assignment/${userId}/${taskToDelete.inspectionDate}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -69,13 +79,32 @@ export default function Dashboard() {
       if (response.ok) {
         // Refresh data
         fetchData();
+        setTaskToDelete(null);
       } else {
-        alert('Failed to delete assignment');
+        alert('Failed to delete assignment from backend');
       }
     } catch (error) {
       console.error('Error deleting assignment:', error);
       alert('An error occurred while deleting the assignment');
     }
+  };
+
+  const handleGoogleLoginForDeletion = useGoogleLogin({
+    onSuccess: (tokenResponse) => {
+      performBackendAndCalendarDeletion(tokenResponse.access_token);
+    },
+    onError: () => {
+      alert('Google Login Failed. Cannot delete calendar event.');
+      setTaskToDelete(null);
+    },
+    scope: 'https://www.googleapis.com/auth/calendar.events'
+  });
+
+  const handleDeleteAssignment = (machineId: string, inspectionDate: string, googleEventId?: string) => {
+    if (!window.confirm('Are you sure you want to delete this assignment?')) return;
+
+    setTaskToDelete({ machineId, inspectionDate, googleEventId });
+    handleGoogleLoginForDeletion(); // Trigger Google popup first
   };
 
   // Process Assignments
@@ -209,15 +238,15 @@ export default function Dashboard() {
                         <div className="font-semibold text-slate-200">{new Date(task.inspectionDate).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}</div>
                       </div>
                       <div className="flex gap-2">
-                        <button 
+                        <button
                           onClick={() => navigate('/review', { state: { task } })}
                           title="Add Review"
                           className="h-10 w-10 rounded-full bg-slate-700 hover:bg-emerald-600 flex items-center justify-center text-white transition-all active:scale-95 shadow-md"
                         >
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
                         </button>
-                        <button 
-                          onClick={() => handleDeleteAssignment(task.machine._id, task.inspectionDate)}
+                        <button
+                          onClick={() => handleDeleteAssignment(task.machine._id, task.inspectionDate, task.googleEventId)}
                           title="Delete Assignment"
                           className="h-10 w-10 rounded-full bg-slate-700 hover:bg-rose-600/20 hover:text-rose-400 flex items-center justify-center text-slate-400 transition-all active:scale-95 border border-slate-700 hover:border-rose-500/50 shadow-md"
                         >

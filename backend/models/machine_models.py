@@ -30,3 +30,4 @@ class MachineAssignmentRequest(BaseModel):
     engineerName: str
     inspectionDate: date
     status: str = "pending"
+    googleEventId: Optional[str] = None
