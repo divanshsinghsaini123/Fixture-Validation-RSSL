@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useGoogleLogin } from '@react-oauth/google';
-import { createCalendarEvent } from '../utils/googleCalendar';
-
 interface Machine {
   _id: string;
   hollowShaftLine: string;
@@ -54,26 +51,24 @@ export default function CreateAssignment() {
   // Filter machines by selected line
   const availableMachines = machines.filter(m => m.hollowShaftLine === selectedLine);
 
-  const performAssignmentAndCalendarSync = async (googleAccessToken: string) => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedMachineId) {
+      alert("Please select a machine first.");
+      return;
+    }
+
     setLoading(true);
     const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
-    const appToken = localStorage.getItem('access_token'); // Backend JWT
+    const appToken = localStorage.getItem('access_token');
 
     try {
       const payload = {
         engineerId: userId,
         engineerName: userName,
-        inspectionDate: inspectionDate,
-        googleEventId: ""
+        inspectionDate: inspectionDate
       };
-      // 2. Google Calendar Event Creation using Google Access Token
-      const calendarResponse = await createCalendarEvent(googleAccessToken, payload);
-      if (calendarResponse) {
-        console.log("google api respose")
-        payload.googleEventId = calendarResponse
-      }
 
-      // 1. Backend Assignment Creation
       const response = await fetch(`${backendUrl}/api/shed2machine/${selectedMachineId}/assign`, {
         method: 'POST',
         headers: {
@@ -83,40 +78,18 @@ export default function CreateAssignment() {
         body: JSON.stringify(payload),
       });
 
-
       if (response.ok) {
-        alert("Assignment and Calendar Event created successfully!");
+        alert("Assignment scheduled successfully!");
         navigate('/dashboard');
       } else {
         const err = await response.json();
-        alert(`Failed: ${err.detail || 'Could not sync with Calendar'}`);
+        alert(`Failed: ${err.detail || 'Could not assign'}`);
       }
     } catch (error) {
-      alert("Error connecting to server or Google API.");
+      alert("Error connecting to server.");
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleGoogleLogin = useGoogleLogin({
-    onSuccess: (tokenResponse) => {
-      // Ye Google ka real access token hai
-      performAssignmentAndCalendarSync(tokenResponse.access_token);
-    },
-    onError: () => {
-      alert('Google Login Failed. Cannot create calendar event.');
-    },
-    scope: 'https://www.googleapis.com/auth/calendar.events'
-  });
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedMachineId) {
-      alert("Please select a machine first.");
-      return;
-    }
-    // Form submit hote hi pehle Google permission mangenge
-    handleGoogleLogin();
   };
 
   return (

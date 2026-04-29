@@ -6,6 +6,7 @@ class EngineerCreate(BaseModel):
     email: str
     phone: str
     password: str
+    google_refresh_token: Optional[str] = None
 
 class EngineerLogin(BaseModel):
     identifier: str  # Can be email or phone

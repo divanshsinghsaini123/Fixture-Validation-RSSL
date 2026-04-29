@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useGoogleLogin } from '@react-oauth/google';
 
 export default function Login() {
   const [identifier, setIdentifier] = useState('');
@@ -12,6 +13,38 @@ export default function Login() {
     setToast({ message, type });
     setTimeout(() => setToast(null), 4000); // fade out after 4 seconds
   };
+
+  const googleLogin = useGoogleLogin({
+    flow: 'auth-code',
+    onSuccess: async (codeResponse) => {
+      try {
+        const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
+        const token = localStorage.getItem('access_token');
+        const res = await fetch(`${backendUrl}/api/calendar/link-google`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ auth_code: codeResponse.code, engineer_id: localStorage.getItem('user_id') })
+        });
+        if (res.ok) {
+          console.log("Calendar linked")
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        navigate('/dashboard');
+      }
+    },
+    onError: () => {
+      // If user cancels Google popup, still take them to dashboard
+      navigate('/dashboard');
+    },
+    scope: 'https://www.googleapis.com/auth/calendar.events',
+    // @ts-ignore: React-OAuth Google sometimes misses 'prompt' in its type definition for auth-code flow
+    prompt: 'consent'
+  });
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,9 +63,10 @@ export default function Login() {
         const data = await response.json();
         localStorage.setItem('access_token', data.access_token);
         localStorage.setItem('user_name', data.name);
-        localStorage.setItem('user_id', data.email); // use email as global identifier
-        showToast('Welcome back, ' + data.name, 'success');
-        setTimeout(() => navigate('/dashboard'), 1500);
+        localStorage.setItem('user_id', data.email); // Reverting back to email for backward compatibility
+        showToast('Welcome back, ' + data.name + '. Connecting Calendar...', 'success');
+        // Trigger Google Login immediately
+        setTimeout(() => googleLogin(), 500);
       } else {
         const err = await response.json();
         showToast(`Login failed: ${err.detail}`, 'error');

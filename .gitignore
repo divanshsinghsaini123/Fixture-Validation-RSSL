@@ -13,6 +13,7 @@ __pycache__/
 venv/
 env/
 .pytest_cache/
+client_secret.json
 
 # Node Frontend
 node_modules/

@@ -8,6 +8,7 @@ from routes.shed2machine_routes import router as shed2machine_router
 from routes.engineers_routes import router as engineers_router
 from routes.reviews_routes import router as reviews_router
 from routes.upload_routes import router as upload_router
+from routes.calendar_routes import router as calendar_router
 
 # Application context manager to start DB on boot
 @asynccontextmanager
@@ -36,6 +37,7 @@ app.include_router(shed2machine_router)
 app.include_router(engineers_router)
 app.include_router(reviews_router)
 app.include_router(upload_router)
+app.include_router(calendar_router)
 
 @app.get("/")
 def read_root():
