@@ -147,20 +147,44 @@ export default function Dashboard() {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-lg flex flex-col justify-center">
-            <span className="text-slate-400 font-medium">Total Tasks</span>
+          <div 
+            onClick={() => navigate('/dashboard/tasks/total')}
+            className="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-lg flex flex-col justify-center cursor-pointer hover:bg-slate-800 transition-colors relative group"
+          >
+            <div className="flex justify-between items-start">
+              <span className="text-slate-400 font-medium">Total Tasks</span>
+              <svg className="w-5 h-5 text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
+            </div>
             <span className="text-4xl font-bold text-white mt-1">{stats.total}</span>
           </div>
-          <div className="bg-emerald-950/20 border border-emerald-900/50 p-5 rounded-2xl shadow-lg flex flex-col justify-center">
-            <span className="text-emerald-400 font-medium">Completed</span>
+          <div 
+            onClick={() => navigate('/dashboard/tasks/completed')}
+            className="bg-emerald-950/20 border border-emerald-900/50 p-5 rounded-2xl shadow-lg flex flex-col justify-center cursor-pointer hover:bg-emerald-900/40 transition-colors relative group"
+          >
+            <div className="flex justify-between items-start">
+              <span className="text-emerald-400 font-medium">Completed</span>
+              <svg className="w-5 h-5 text-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
+            </div>
             <span className="text-4xl font-bold text-emerald-300 mt-1">{stats.completed}</span>
           </div>
-          <div className="bg-amber-950/20 border border-amber-900/50 p-5 rounded-2xl shadow-lg flex flex-col justify-center">
-            <span className="text-amber-400 font-medium">Pending</span>
+          <div 
+            onClick={() => navigate('/dashboard/tasks/pending')}
+            className="bg-amber-950/20 border border-amber-900/50 p-5 rounded-2xl shadow-lg flex flex-col justify-center cursor-pointer hover:bg-amber-900/40 transition-colors relative group"
+          >
+            <div className="flex justify-between items-start">
+              <span className="text-amber-400 font-medium">Pending</span>
+              <svg className="w-5 h-5 text-amber-500 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
+            </div>
             <span className="text-4xl font-bold text-amber-300 mt-1">{stats.pending}</span>
           </div>
-          <div className="bg-rose-950/20 border border-rose-900/50 p-5 rounded-2xl shadow-lg flex flex-col justify-center">
-            <span className="text-rose-400 font-medium">Overdue (Missed)</span>
+          <div 
+            onClick={() => navigate('/dashboard/tasks/missed')}
+            className="bg-rose-950/20 border border-rose-900/50 p-5 rounded-2xl shadow-lg flex flex-col justify-center cursor-pointer hover:bg-rose-900/40 transition-colors relative group"
+          >
+            <div className="flex justify-between items-start">
+              <span className="text-rose-400 font-medium">Overdue (Missed)</span>
+              <svg className="w-5 h-5 text-rose-500 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
+            </div>
             <span className="text-4xl font-bold text-rose-300 mt-1">{stats.overdue}</span>
           </div>
         </div>

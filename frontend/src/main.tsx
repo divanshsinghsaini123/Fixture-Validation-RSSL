@@ -10,6 +10,7 @@ import Dashboard from './components/Dashboard.tsx'
 import CreateAssignment from './components/CreateAssignment.tsx'
 import DataDashboard from './components/DataDashboard.tsx'
 import MachineReview from './components/MachineReview.tsx'
+import TaskCategory from './components/TaskCategory.tsx'
 
 // Basic guard component protecting routes if JWT token doesn't exist
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
@@ -38,6 +39,11 @@ createRoot(document.getElementById('root')!).render(
           <Route path="/dashboard/data" element={
             <PrivateRoute>
               <DataDashboard />
+            </PrivateRoute>
+          } />
+          <Route path="/dashboard/tasks/:category" element={
+            <PrivateRoute>
+              <TaskCategory />
             </PrivateRoute>
           } />
           <Route path="/create-assignment" element={
