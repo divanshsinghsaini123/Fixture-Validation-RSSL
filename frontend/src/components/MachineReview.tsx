@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 export default function MachineReview() {
@@ -18,6 +18,38 @@ export default function MachineReview() {
   const [score, setScore] = useState<number | ''>('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [pastReviews, setPastReviews] = useState<any[]>([]);
+  const [loadingReviews, setLoadingReviews] = useState(true);
+
+  useEffect(() => {
+    if (!task?.machine?._id) return;
+
+    const fetchReviews = async () => {
+      try {
+        const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
+        const token = localStorage.getItem('access_token');
+        const response = await fetch(`${backendUrl}/api/reviews/${task.machine._id}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          // To show reviews specifically by this engineer
+          const engineerId = localStorage.getItem('user_id') || task.engineerId;
+          const engineerReviews = data.reviews.filter((r: any) => r.engineerId === engineerId);
+          setPastReviews(engineerReviews);
+        }
+      } catch (err) {
+        console.error('Failed to fetch reviews', err);
+      } finally {
+        setLoadingReviews(false);
+      }
+    };
+
+    fetchReviews();
+  }, [task]);
 
   if (!task) {
     return (
@@ -159,6 +191,72 @@ export default function MachineReview() {
               <div className="text-rose-300">{new Date(task.inspectionDate).toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</div>
             </div>
           </div>
+        </div>
+
+        {/* Past Reviews by this Engineer */}
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl shadow-lg p-6 mb-6">
+          <h2 className="text-xl font-bold text-white mb-4 border-b border-slate-800 pb-2">Your Previous Reviews</h2>
+          {loadingReviews ? (
+            <p className="text-slate-400">Loading past reviews...</p>
+          ) : pastReviews.length > 0 ? (
+            <div className="space-y-4">
+              {pastReviews.map((review: any, idx: number) => (
+                <div key={idx} className="p-4 bg-slate-950 rounded-xl border border-slate-800">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="font-semibold text-indigo-400">{review.engineerName}</span>
+                    <span className="text-sm text-slate-500">
+                      {new Date(review.reviewDate).toLocaleDateString(undefined, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4 text-sm mb-3">
+                    <div>
+                      <span className="text-slate-500">Status: </span>
+                      <span className={review.status === 'Pass' ? 'text-emerald-400' : review.status === 'Fail' ? 'text-rose-400' : 'text-amber-400'}>
+                        {review.status}
+                      </span>
+                    </div>
+                    {review.score !== null && review.score !== undefined && (
+                      <div>
+                        <span className="text-slate-500">Score: </span>
+                        <span className="text-slate-200">{review.score}/10</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Check Sheet Rows Display */}
+                  {review.checkSheetRows && review.checkSheetRows.length > 0 && (
+                    <div className="mt-3">
+                      <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Inspection Details</div>
+                      <div className="overflow-x-auto rounded-lg border border-slate-800 bg-slate-900/50">
+                        <table className="w-full text-left text-xs border-collapse">
+                          <thead className="bg-slate-800/80 text-slate-300">
+                            <tr>
+                              <th className="px-3 py-2 font-medium border-b border-slate-700">Contents</th>
+                              <th className="px-3 py-2 font-medium border-b border-slate-700 text-center">Before</th>
+                              <th className="px-3 py-2 font-medium border-b border-slate-700 text-center">After</th>
+                              <th className="px-3 py-2 font-medium border-b border-slate-700">Remark</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-slate-800/50">
+                            {review.checkSheetRows.map((row: any, rIdx: number) => (
+                              <tr key={rIdx} className="hover:bg-slate-800/30">
+                                <td className="px-3 py-2 font-medium text-slate-300">{row.contents}</td>
+                                <td className="px-3 py-2 text-center text-slate-400">{row.beforeStatus || '-'}</td>
+                                <td className="px-3 py-2 text-center text-slate-400">{row.afterStatus || '-'}</td>
+                                <td className="px-3 py-2 text-slate-400">{row.remark || '-'}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-slate-500 italic">You have no previous reviews for this machine.</p>
+          )}
         </div>
 
         {/* Review Form */}

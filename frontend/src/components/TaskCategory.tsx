@@ -24,7 +24,7 @@ export default function TaskCategory() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  const userName = localStorage.getItem('user_name') || 'Engineer';
+  // const userName = localStorage.getItem('user_name') || 'Engineer';
   const userId = localStorage.getItem('user_id') || '';
 
   useEffect(() => {
@@ -113,11 +113,11 @@ export default function TaskCategory() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 p-4 font-sans flex flex-col items-center">
       <div className="w-full max-w-6xl space-y-6 mt-6">
-        
+
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-center bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-lg">
           <div className="flex items-center gap-4">
-            <button 
+            <button
               onClick={() => navigate('/dashboard')}
               className="w-10 h-10 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center transition-colors text-slate-300"
             >

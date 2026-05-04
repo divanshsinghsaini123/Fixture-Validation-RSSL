@@ -1,15 +1,15 @@
 import { useNavigate } from 'react-router-dom';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function Shed2Remove() {
     const navigate = useNavigate();
     const [lines, setLines] = useState<string[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
-    
+
     // Toast state
-    const [toast, setToast] = useState<{message: string, type: 'success' | 'error'} | null>(null);
-    
+    const [toast, setToast] = useState<{ message: string, type: 'success' | 'error' } | null>(null);
+
     // Modal state
     const [lineToDelete, setLineToDelete] = useState<string | null>(null);
 
@@ -44,7 +44,7 @@ export default function Shed2Remove() {
 
     const deleteMachineLine = async () => {
         if (!lineToDelete) return;
-        
+
         try {
             const token = localStorage.getItem('access_token');
             const response = await fetch(`${backendUrl}/api/shed2machine/remove/${lineToDelete}`, {
@@ -77,7 +77,7 @@ export default function Shed2Remove() {
             <div className="max-w-4xl mx-auto">
                 {/* Header */}
                 <div className="flex items-center mb-8">
-                    <button 
+                    <button
                         onClick={() => navigate(-1)}
                         className="mr-4 p-2 bg-slate-800 hover:bg-slate-700 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-slate-500"
                         title="Go Back"
@@ -122,7 +122,7 @@ export default function Shed2Remove() {
                                         <p className="text-sm text-slate-400">Machine Line</p>
                                     </div>
                                 </div>
-                                <button 
+                                <button
                                     onClick={() => setLineToDelete(line)}
                                     className="bg-red-500/10 hover:bg-red-500 hover:text-white text-red-500 p-3 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-red-500/50"
                                     title="Delete this line"
@@ -151,13 +151,13 @@ export default function Shed2Remove() {
                             Are you sure you want to delete <span className="font-bold text-emerald-400">"{lineToDelete}"</span>? This will permanently remove <span className="text-red-400 font-bold underline decoration-red-400/50 underline-offset-2">ALL</span> machines associated with this line. This action cannot be undone.
                         </p>
                         <div className="flex gap-3">
-                            <button 
+                            <button
                                 onClick={() => setLineToDelete(null)}
                                 className="flex-1 px-4 py-3 bg-slate-700 hover:bg-slate-600 text-white font-medium rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-slate-500"
                             >
                                 Cancel
                             </button>
-                            <button 
+                            <button
                                 onClick={deleteMachineLine}
                                 className="flex-1 px-4 py-3 bg-red-600 hover:bg-red-500 text-white font-medium rounded-xl transition-all shadow-lg shadow-red-600/20 focus:outline-none focus:ring-2 focus:ring-red-500"
                             >
@@ -171,11 +171,10 @@ export default function Shed2Remove() {
             {/* Custom Toast Notification */}
             {toast && (
                 <div className="fixed bottom-6 right-6 z-50 animate-in slide-in-from-bottom-5 fade-in duration-300">
-                    <div className={`flex items-center gap-3 px-5 py-4 rounded-xl shadow-2xl backdrop-blur-md ${
-                        toast.type === 'success' 
-                            ? 'bg-emerald-900/80 border border-emerald-500/50 text-emerald-100' 
+                    <div className={`flex items-center gap-3 px-5 py-4 rounded-xl shadow-2xl backdrop-blur-md ${toast.type === 'success'
+                            ? 'bg-emerald-900/80 border border-emerald-500/50 text-emerald-100'
                             : 'bg-red-900/80 border border-red-500/50 text-red-100'
-                    }`}>
+                        }`}>
                         {toast.type === 'success' ? (
                             <div className="bg-emerald-500/20 p-1.5 rounded-full text-emerald-400">
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
