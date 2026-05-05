@@ -143,3 +143,19 @@ def delete_machine(hollowShaftLine: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+def get_all_unique_lines():
+    db = get_db()
+    if db is None:
+        raise HTTPException(status_code=500, detail="Database error.")
+        
+    collection = db["Shed2machines"]
+    try:
+        # Use find to get all documents
+        machines = collection.find()
+        lines = set()
+        for mach in machines:
+            lines.add(mach["hollowShaftLine"])
+        return list(lines)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+

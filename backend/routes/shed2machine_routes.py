@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from models.machine_models import Shed2MachineRegistration, MachineAssignmentRequest
-from controllers.shed2machine_logic import create_machine, fetch_all_machines, assign_engineer_to_machine, delete_assignment, delete_machine
+from controllers.shed2machine_logic import create_machine, fetch_all_machines, assign_engineer_to_machine, delete_assignment, delete_machine , get_all_unique_lines
 
 # Create an APIRouter for all routing prefix "/api/shed2machine"
 router = APIRouter(prefix="/api/shed2machine", tags=["Shed2Machine"])
@@ -15,6 +15,11 @@ def route_register_machine(machine: Shed2MachineRegistration):
 def route_get_machines():
     # Delegate logic to controller
     return {"machines": fetch_all_machines()}
+
+@router.get("/get_all_lines")
+def route_get_all_lines():
+    # Delegate logic to controller
+    return {"lines": get_all_unique_lines()}
 
 @router.post("/{machine_id}/assign")
 def route_assign_engineer(machine_id: str, assignment: MachineAssignmentRequest):
