@@ -17,12 +17,20 @@ export default function DataDashboard() {
             <h3 className="text-xl font-bold text-white mb-1">Shed2 Management</h3>
             <p className="text-slate-400">add data to shed2</p>
           </div>
-          <button
-            onClick={() => navigate('/dashboard/shed2')}
-            className="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-xl font-medium shadow-lg transition-transform active:scale-95"
-          >
-            Go to Shed 2
-          </button>
+          <div className="flex gap-4">
+            <button
+              onClick={() => navigate('/dashboard/shed2')}
+              className="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-xl font-medium shadow-lg transition-transform active:scale-95"
+            >
+              Add machine
+            </button>
+            <button
+              onClick={() => navigate('/dashboard/shed2/remove')}
+              className="bg-red-600 hover:bg-red-500 text-white px-5 py-2.5 rounded-xl font-medium shadow-lg transition-transform active:scale-95"
+            >
+              Remove-Line
+            </button>
+          </div>
         </div>
 
         <div className="pt-6 border-t border-slate-800">

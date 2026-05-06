@@ -127,3 +127,19 @@ def delete_assignment(machine_id: str, engineer_id: str, inspection_date: str):
         return {"message": "Assignment deleted successfully!"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+def delete_machine(hollowShaftLine: str):
+    db = get_db()
+    if db is None:
+        raise HTTPException(status_code=500, detail="Database error.")
+        
+    collection = db["Shed2machines"]
+    try:
+        # Use delete_many to delete ALL documents that match the hollowShaftLine
+        result = collection.delete_many({"hollowShaftLine": hollowShaftLine})
+        return {
+            "message": f"Successfully deleted {result.deleted_count} machine(s) from line {hollowShaftLine}!"
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+

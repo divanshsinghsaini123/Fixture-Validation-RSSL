@@ -10,6 +10,7 @@ import Dashboard from './components/Dashboard.tsx'
 import CreateAssignment from './components/CreateAssignment.tsx'
 import DataDashboard from './components/DataDashboard.tsx'
 import MachineReview from './components/MachineReview.tsx'
+import Shed2Remove from './components/Shed2Remove.tsx'
 import TaskCategory from './components/TaskCategory.tsx'
 
 // Basic guard component protecting routes if JWT token doesn't exist
@@ -39,6 +40,11 @@ createRoot(document.getElementById('root')!).render(
           <Route path="/dashboard/data" element={
             <PrivateRoute>
               <DataDashboard />
+            </PrivateRoute>
+          } />
+          <Route path="/dashboard/shed2/remove" element={
+            <PrivateRoute>
+              <Shed2Remove />
             </PrivateRoute>
           } />
           <Route path="/dashboard/tasks/:category" element={
