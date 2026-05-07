@@ -74,8 +74,10 @@ def assign_engineer_to_machine(machine_id: str, assignment_data):
         # 3. Create Google Calendar Event if token exists
         if engineer and engineer.get("google_refresh_token"):
             task_details = {
+                "line" : machine.get("hollowShaftLine" , "") ,
                 "machineName": machine.get("machineName", ""),
                 "machineNumber": machine.get("machineNumber", ""),
+                "model" : machine.get("model", ""), 
                 "inspectionDate": assign_dict["inspectionDate"]
             }
             event_id = create_event(engineer["google_refresh_token"], task_details)

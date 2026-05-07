@@ -45,8 +45,8 @@ def create_event(refresh_token: str, task_details: dict):
         service = build('calendar', 'v3', credentials=creds)
         
         event = {
-            'summary': f"Validation Task: {task_details.get('machineName', 'Machine')}",
-            'description': f"Validation review assigned for machine {task_details.get('machineNumber', '')}",
+            'summary': f"Validation Task: {task_details.get('line', '')}",
+            'description': f"Validation review assigned for \n machineName : {task_details.get('machineName', 'none')} \n machine-no:  {task_details.get('machineNumber', 'none')} \n model: {task_details.get('model', 'none')}",
             'start': {
                 'date': task_details.get('inspectionDate', '').split('T')[0],
                 'timeZone': 'Asia/Kolkata',
@@ -55,6 +55,22 @@ def create_event(refresh_token: str, task_details: dict):
                 'date': task_details.get('inspectionDate', '').split('T')[0],
                 'timeZone': 'Asia/Kolkata',
             },
+            # Explicitly control notifications to override the default 11:30 PM reminder
+            'reminders': {
+                'useDefault': False, 
+                'overrides': [
+                    # 1. Day of event at 10:00 AM (Popup)
+                    {'method': 'popup', 'minutes': -600},
+                    
+                    # 2. 1 day before at 10:00 AM (Popup)
+                    {'method': 'popup', 'minutes': 840}, 
+                    # 3. 1 day before at 10:00 AM (Email)
+                    {'method': 'email', 'minutes': 840}, 
+                    
+                    # 4. 1 week before at 10:00 AM (Popup)
+                    {'method': 'popup', 'minutes': 9480}
+                ],
+            }
         }
         
         event_result = service.events().insert(calendarId='primary', body=event).execute()
