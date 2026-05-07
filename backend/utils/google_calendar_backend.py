@@ -45,8 +45,8 @@ def create_event(refresh_token: str, task_details: dict):
         service = build('calendar', 'v3', credentials=creds)
         
         event = {
-            'summary': f"Validation Task: {task_details.get('machineName', 'Machine')}",
-            'description': f"Validation review assigned for machine {task_details.get('machineNumber', '')}",
+            'summary': f"Validation Task: {task_details.get('line', '')}",
+            'description': f"Validation review assigned for \n machineName : {task_details.get('machineName', 'none')} \n machine-no:  {task_details.get('machineNumber', 'none')} \n model: {task_details.get('model', 'none')}",
             'start': {
                 'date': task_details.get('inspectionDate', '').split('T')[0],
                 'timeZone': 'Asia/Kolkata',
