@@ -20,7 +20,7 @@ def route_get_machines():
 def route_get_all_lines():
     # Delegate logic to controller
     return {"lines": get_all_unique_lines()}
-
+        
 @router.post("/{machine_id}/assign")
 def route_assign_engineer(machine_id: str, assignment: MachineAssignmentRequest):
     return assign_engineer_to_machine(machine_id, assignment)
