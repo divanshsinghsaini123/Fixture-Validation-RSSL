@@ -55,6 +55,22 @@ def create_event(refresh_token: str, task_details: dict):
                 'date': task_details.get('inspectionDate', '').split('T')[0],
                 'timeZone': 'Asia/Kolkata',
             },
+            # Explicitly control notifications to override the default 11:30 PM reminder
+            'reminders': {
+                'useDefault': False, 
+                'overrides': [
+                    # 1. Day of event at 10:00 AM (Popup)
+                    {'method': 'popup', 'minutes': -600},
+                    
+                    # 2. 1 day before at 10:00 AM (Popup)
+                    {'method': 'popup', 'minutes': 840}, 
+                    # 3. 1 day before at 10:00 AM (Email)
+                    {'method': 'email', 'minutes': 840}, 
+                    
+                    # 4. 1 week before at 10:00 AM (Popup)
+                    {'method': 'popup', 'minutes': 9480}
+                ],
+            }
         }
         
         event_result = service.events().insert(calendarId='primary', body=event).execute()
