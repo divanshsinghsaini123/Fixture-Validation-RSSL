@@ -125,6 +125,12 @@ export default function Dashboard() {
           </div>
           <div className="flex items-center gap-3 mt-4 sm:mt-0">
             <button
+              onClick={() => navigate('/dashboard/view-data')}
+              className="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-xl font-medium shadow-lg transition-transform active:scale-95"
+            >
+              View SHED'S data
+            </button>
+            <button
               onClick={() => navigate('/dashboard/data')}
               className="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-xl font-medium shadow-lg transition-transform active:scale-95"
             >
@@ -147,7 +153,7 @@ export default function Dashboard() {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div 
+          <div
             onClick={() => navigate('/dashboard/tasks/total')}
             className="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-lg flex flex-col justify-center cursor-pointer hover:bg-slate-800 transition-colors relative group"
           >
@@ -157,7 +163,7 @@ export default function Dashboard() {
             </div>
             <span className="text-4xl font-bold text-white mt-1">{stats.total}</span>
           </div>
-          <div 
+          <div
             onClick={() => navigate('/dashboard/tasks/completed')}
             className="bg-emerald-950/20 border border-emerald-900/50 p-5 rounded-2xl shadow-lg flex flex-col justify-center cursor-pointer hover:bg-emerald-900/40 transition-colors relative group"
           >
@@ -167,7 +173,7 @@ export default function Dashboard() {
             </div>
             <span className="text-4xl font-bold text-emerald-300 mt-1">{stats.completed}</span>
           </div>
-          <div 
+          <div
             onClick={() => navigate('/dashboard/tasks/pending')}
             className="bg-amber-950/20 border border-amber-900/50 p-5 rounded-2xl shadow-lg flex flex-col justify-center cursor-pointer hover:bg-amber-900/40 transition-colors relative group"
           >
@@ -177,7 +183,7 @@ export default function Dashboard() {
             </div>
             <span className="text-4xl font-bold text-amber-300 mt-1">{stats.pending}</span>
           </div>
-          <div 
+          <div
             onClick={() => navigate('/dashboard/tasks/missed')}
             className="bg-rose-950/20 border border-rose-900/50 p-5 rounded-2xl shadow-lg flex flex-col justify-center cursor-pointer hover:bg-rose-900/40 transition-colors relative group"
           >

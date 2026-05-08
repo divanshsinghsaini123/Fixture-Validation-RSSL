@@ -12,6 +12,8 @@ import DataDashboard from './components/DataDashboard.tsx'
 import MachineReview from './components/MachineReview.tsx'
 import Shed2Remove from './components/Shed2Remove.tsx'
 import TaskCategory from './components/TaskCategory.tsx'
+import ViewShedData from './components/ViewShedData.tsx';
+import ViewShedLines from './components/ViewShedLines.tsx';
 
 // Basic guard component protecting routes if JWT token doesn't exist
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
@@ -60,6 +62,16 @@ createRoot(document.getElementById('root')!).render(
           <Route path="/review" element={
             <PrivateRoute>
               <MachineReview />
+            </PrivateRoute>
+          } />
+          <Route path="/dashboard/view-data" element={
+            <PrivateRoute>
+              <ViewShedData />
+            </PrivateRoute>
+          } />
+          <Route path="/dashboard/view-data/lines" element={
+            <PrivateRoute>
+              <ViewShedLines />
             </PrivateRoute>
           } />
 
