@@ -144,23 +144,23 @@ export default function MachineReview() {
       <div className="max-w-4xl mx-auto space-y-6">
 
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-6">
           <div>
-            <h1 className="text-3xl font-bold text-white mb-2">Machine Validation Review</h1>
-            <p className="text-slate-400">Complete your scheduled inspection and record the results below.</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Machine Validation Review</h1>
+            <p className="text-slate-400 text-sm sm:text-base">Complete your scheduled inspection and record the results below.</p>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-3 w-full sm:w-auto">
             <button
               onClick={handleDeleteTask}
               disabled={loading}
-              className="bg-slate-900 border border-rose-500/30 text-rose-400 hover:bg-rose-500/10 px-5 py-2.5 rounded-xl font-medium transition-all flex items-center gap-2"
+              className="flex-1 sm:flex-none bg-slate-900 border border-rose-500/30 text-rose-400 hover:bg-rose-500/10 px-4 sm:px-5 py-2.5 rounded-xl text-sm sm:text-base font-medium transition-all flex justify-center items-center gap-2"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
               <span>Delete Task</span>
             </button>
             <button
               onClick={() => navigate('/dashboard')}
-              className="bg-slate-800 hover:bg-slate-700 text-white px-5 py-2.5 rounded-xl font-medium shadow-sm transition-all flex items-center gap-2"
+              className="flex-1 sm:flex-none bg-slate-800 hover:bg-slate-700 text-white px-4 sm:px-5 py-2.5 rounded-xl text-sm sm:text-base font-medium shadow-sm transition-all flex justify-center items-center gap-2"
             >
               <span>Cancel</span>
             </button>
