@@ -115,16 +115,16 @@ export default function TaskCategory() {
       <div className="w-full max-w-6xl space-y-6 mt-6">
 
         {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-center bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-lg">
-          <div className="flex items-center gap-4">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-lg gap-4">
+          <div className="flex items-start sm:items-center gap-4">
             <button
               onClick={() => navigate('/dashboard')}
-              className="w-10 h-10 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center transition-colors text-slate-300"
+              className="w-10 h-10 flex-shrink-0 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center transition-colors text-slate-300 mt-1 sm:mt-0"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path></svg>
             </button>
             <div>
-              <h1 className="text-2xl font-bold flex items-center gap-3">
+              <h1 className="text-xl sm:text-2xl font-bold flex flex-wrap items-center gap-2 sm:gap-3">
                 {getCategoryTitle()}
                 <span className={`text-sm px-3 py-1 rounded-full font-medium ${getCategoryColor()}`}>
                   {filteredAssignments.length}

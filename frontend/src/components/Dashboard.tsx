@@ -123,28 +123,28 @@ export default function Dashboard() {
               <p className="text-slate-400 text-sm">Validations Dashboard</p>
             </div>
           </div>
-          <div className="flex items-center gap-3 mt-4 sm:mt-0">
+          <div className="flex flex-wrap items-center justify-center sm:justify-end gap-3 mt-4 sm:mt-0 w-full sm:w-auto">
             <button
               onClick={() => navigate('/dashboard/view-data')}
-              className="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-xl font-medium shadow-lg transition-transform active:scale-95"
+              className="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 sm:px-5 sm:py-2.5 rounded-xl text-sm sm:text-base font-medium shadow-lg transition-transform active:scale-95 flex-1 sm:flex-none whitespace-nowrap text-center"
             >
               View SHED'S data
             </button>
             <button
               onClick={() => navigate('/dashboard/data')}
-              className="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-xl font-medium shadow-lg transition-transform active:scale-95"
+              className="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 sm:px-5 sm:py-2.5 rounded-xl text-sm sm:text-base font-medium shadow-lg transition-transform active:scale-95 flex-1 sm:flex-none whitespace-nowrap text-center"
             >
               ADD SHED's data
             </button>
             <button
               onClick={() => navigate('/create-assignment')}
-              className="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl font-medium shadow-lg transition-transform active:scale-95"
+              className="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 sm:px-5 sm:py-2.5 rounded-xl text-sm sm:text-base font-medium shadow-lg transition-transform active:scale-95 flex-1 sm:flex-none whitespace-nowrap text-center"
             >
               + Create New Assignment
             </button>
             <button
               onClick={handleLogout}
-              className="bg-slate-800 hover:bg-rose-500/20 hover:text-rose-400 text-slate-300 border border-slate-700 hover:border-rose-500/50 px-4 py-2.5 rounded-xl font-medium shadow-sm transition-all"
+              className="bg-slate-800 hover:bg-rose-500/20 hover:text-rose-400 text-slate-300 border border-slate-700 hover:border-rose-500/50 px-4 py-2 sm:px-4 sm:py-2.5 rounded-xl text-sm sm:text-base font-medium shadow-sm transition-all flex-1 sm:flex-none whitespace-nowrap text-center"
             >
               Logout
             </button>

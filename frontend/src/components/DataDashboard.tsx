@@ -12,12 +12,12 @@ export default function DataDashboard() {
         </p>
 
         {/* Action Card inside Data Dashboard */}
-        <div className="bg-slate-800 border border-slate-700 p-6 rounded-2xl shadow-lg text-left my-8 flex items-center justify-between">
-          <div>
+        <div className="bg-slate-800 border border-slate-700 p-6 rounded-2xl shadow-lg text-left my-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="text-center sm:text-left">
             <h3 className="text-xl font-bold text-white mb-1">Shed2 Management</h3>
             <p className="text-slate-400">add data to shed2</p>
           </div>
-          <div className="flex gap-4">
+          <div className="flex flex-wrap justify-center gap-4">
             <button
               onClick={() => navigate('/dashboard/shed2')}
               className="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-xl font-medium shadow-lg transition-transform active:scale-95"
