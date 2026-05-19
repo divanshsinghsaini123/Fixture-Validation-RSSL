@@ -14,6 +14,7 @@ import Shed2Remove from './components/Shed2Remove.tsx'
 import TaskCategory from './components/TaskCategory.tsx'
 import ViewShedData from './components/ViewShedData.tsx';
 import ViewShedLines from './components/ViewShedLines.tsx';
+import ViewLine from './components/ViewLine.tsx'
 
 // Basic guard component protecting routes if JWT token doesn't exist
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
@@ -74,7 +75,11 @@ createRoot(document.getElementById('root')!).render(
               <ViewShedLines />
             </PrivateRoute>
           } />
-
+          <Route path="/dashboard/view-data/lines:lineName" element={
+            <PrivateRoute>
+              <ViewLine />
+            </PrivateRoute>
+          } />
         </Routes>
       </BrowserRouter>
     </GoogleOAuthProvider>
